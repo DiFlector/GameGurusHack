@@ -1,6 +1,10 @@
 using UnityEngine;
-using UnityEngine.UI;
 
+public enum FireType
+{
+    Spray,
+    Single
+}
 [CreateAssetMenu(menuName="WeaponData")]
 public class WeaponData : ScriptableObject
 {
@@ -11,4 +15,5 @@ public class WeaponData : ScriptableObject
     public float FireRate;
     public float ReloadTime;
     public bool WideScope;
+    public FireType FireType;
 }

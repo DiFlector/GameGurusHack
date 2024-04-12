@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
         _jump.canceled += OnJump;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Vector2 direction = _movement.ReadValue<Vector2>();
         _currInputVector = Vector2.SmoothDamp(_currInputVector, direction, ref _smoothInputVector, _smoothVelocityValue);

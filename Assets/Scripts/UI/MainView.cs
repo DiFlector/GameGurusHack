@@ -1,14 +1,15 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 public class MainView : View
 {
     [SerializeField] private HPBar _hpBar;
     [SerializeField] private WeaponLabel _weaponLabel;
-    [SerializeField] private TMP_Text _ammoAmount;
     public override void Init()
     {
         _hpBar.SetHPAmount(Player.Instance.HPAmount);
+        _hpBar.SetArmorAmount(Player.Instance.ArmorAmount);
         Player.Instance._currentWeapon.UpdateWeaponInfo();
     }
 }

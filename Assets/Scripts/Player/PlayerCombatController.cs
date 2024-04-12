@@ -20,6 +20,7 @@ public class PlayerCombatController : MonoBehaviour
         _reload.Enable();
 
         _fire.performed += Fire;
+        _fire.canceled += Fire;
         _reload.performed += Reload;
     }
 
@@ -42,7 +43,12 @@ public class PlayerCombatController : MonoBehaviour
 
     private void Fire(InputAction.CallbackContext context)
     {
-        _player.Shoot();
+        if (context.performed)
+        {
+            _player.Shoot(true);
+        }
+        else if (context.canceled)
+            _player.Shoot(false);
     }
 
     private void Reload(InputAction.CallbackContext context)

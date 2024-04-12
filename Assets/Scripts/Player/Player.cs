@@ -1,24 +1,65 @@
-using UnityEngine.Events;
-using UnityEngine;
+using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : Singleton<Player>
 {
     public static UnityEvent<int> OnHealthChanged = new();
+    public static UnityEvent<int> OnArmorChanged = new();
     public static UnityEvent OnShot = new();
+    private bool isSpraying; 
+
     public int HPAmount { get; private set; } = 5;
+    public int ArmorAmount { get; private set; } = 0;
+    [SerializeField] private float _armorRestoreDelay;
     public Weapon _currentWeapon;
     [SerializeField] private List<Weapon> _weapons;
+    [SerializeField] private CinemachineVirtualCamera _camera;
 
     protected override void Awake()
     {
         base.Awake();
+        CheckArmorForRestore();
     }
 
-    public void Shoot()
+    public void Shoot(bool state)
     {
-        _currentWeapon.Shoot();
+        if (!isSpraying && state)
+        {
+            isSpraying = true;
+            StartCoroutine(ShootProcess(state));
+        }
+        if (!state)
+            isSpraying = false;
+        
         OnShot.Invoke();
+    }
+
+    private IEnumerator ShootProcess(bool state)
+    {
+        while (isSpraying)
+        {
+            if (_currentWeapon.TryShoot())
+            {
+                _camera.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value -= 2;
+                StartCoroutine(Recoil());
+            }
+            yield return new WaitForSeconds(_currentWeapon.WeaponData.FireRate);
+        }
+    }
+
+    private IEnumerator Recoil()
+    {
+        float duration = 1;
+        float timeElapsed = 0;
+        while (timeElapsed / duration < 1)
+        {
+            _camera.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value += Mathf.Lerp(0, 0.1f, timeElapsed / duration);
+            timeElapsed += Time.deltaTime * 10;
+            yield return null;
+        }
     }
 
     public void Reload()
@@ -27,22 +68,56 @@ public class Player : Singleton<Player>
     }
     
 
-
-
-
+    public void ApplyDamage()
+    {
+        if (ArmorAmount > 0)
+            ChangeArmor(ArmorAmount - 1);
+        else
+            ChangeHP(HPAmount - 1);
+    }
 
     /// <summary>
     /// Adds value to HP
     /// </summary>
-    public void ChangeHP(int points)
+    private void ChangeHP(int points)
     {
         if (HPAmount + points <= 0)
         {
+            HPAmount = 0;
             Death();
             return;
-        } 
-        HPAmount += points;
+        }
+        else if (HPAmount + points > 5)
+            HPAmount = 5;
+        else
+            HPAmount += points;
         OnHealthChanged.Invoke(HPAmount);
+    }
+
+    /// <summary>
+    /// Adds value to Armor
+    /// </summary>
+    private void ChangeArmor(int points)
+    {
+        if (ArmorAmount + points > 5)
+            ArmorAmount = 5;
+        else if (ArmorAmount + points < 0)
+            return;
+        else
+            ArmorAmount += points;
+        OnArmorChanged.Invoke(ArmorAmount);
+        CheckArmorForRestore();
+    }
+    private void CheckArmorForRestore()
+    {
+        if (ArmorAmount < 5)
+            StartCoroutine(RestoreArmor());
+    }
+
+    private IEnumerator RestoreArmor()
+    {
+        yield return new WaitForSeconds(_armorRestoreDelay);
+        ChangeArmor(1);
     }
 
     private void Death()

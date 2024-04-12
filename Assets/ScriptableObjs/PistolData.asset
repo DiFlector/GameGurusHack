@@ -16,6 +16,7 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 4c83e183f0c8c5a4ca1e25bcd602732a, type: 3}
   MaxAmmoIn: 12
   AllAmmo: 60
-  FireRate: 0.5
+  FireRate: 0.1
   ReloadTime: 3
   WideScope: 0
+  FireType: 0
