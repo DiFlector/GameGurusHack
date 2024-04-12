@@ -35,8 +35,6 @@ namespace SimplePieMenu
         {
             get { return details; }
         }
-        
-        public GameObject Item;
 
         [OnValueChange(nameof(ToggleDisableMenuItem))] [SerializeField]
         bool disabled;
