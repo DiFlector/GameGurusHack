@@ -6,18 +6,18 @@ namespace Enemy
 {
     public class test : MonoBehaviour
     {
-        private EnemyStates _enemyStates;
+        private EnemyController _enemyController;
 
         private void Start()
         {
-            _enemyStates = FindObjectOfType<EnemyStates>();
+            _enemyController = FindObjectOfType<EnemyController>();
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _enemyStates.OnStateChange?.Invoke();
+                _enemyController.OnStateChange?.Invoke();
             }
         }
     }

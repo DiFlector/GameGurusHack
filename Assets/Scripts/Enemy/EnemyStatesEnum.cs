@@ -3,9 +3,8 @@ namespace Enemy
     public enum EnemyStatesEnum
     {
         Idle,
-        Seekeing,
+        Patrolling,
         Following,
         Attacking,
-        Crouching
     }
 }

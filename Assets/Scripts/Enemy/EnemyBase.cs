@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Enemy
@@ -6,10 +7,12 @@ namespace Enemy
     {
         private int _health;
         //private int _armor;
-        private int _damage;
-        public  float _maxAttackRange {get; private set;}
+        private int _damage = 1;
+        public float _maxAttackRange { get; private set; } = 10;
+        public float _viewDistance { get; private set; } = 20;
         [HideInInspector] public float _speed {get; private set;}
         private AudioClip _response1;
+        [SerializeField] private float _attackTimer;
         
         public void TakeDamage(int damage)
         {
@@ -19,9 +22,17 @@ namespace Enemy
             Death();
         }
 
+        private void Update()
+        {
+            _attackTimer += Time.deltaTime;
+        }
+
         public void Attack()
         {
-            //_player.TakeDamage(_damage);
+            if (_attackTimer < 2) return;
+            Player.Instance.ChangeHP(_damage);
+            _attackTimer = 0;
+            print("Attack");
         }
         
         public void SetSpeed(float speed)

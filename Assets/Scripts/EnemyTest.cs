@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IDamagable
+public class EnemyTest : MonoBehaviour, IDamagable
 {
     private int _Health = 4;
 
