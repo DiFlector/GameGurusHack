@@ -20,6 +20,7 @@ public class WeaponLabel : MonoBehaviour
 
     private void ChangeAmmo(int ammoIn, int ammoAll)
     {
+        Debug.Log("AMMO CHANGED)))))))))");
         _ammoInGun.text = ammoIn.ToString();
         _ammoAtAll.text = ammoAll.ToString();
     }

@@ -1,6 +1,4 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI.Extensions;
 
 public class MainView : View
 {
@@ -11,5 +9,6 @@ public class MainView : View
         _hpBar.SetHPAmount(Player.Instance.HPAmount);
         _hpBar.SetArmorAmount(Player.Instance.ArmorAmount);
         Player.Instance._currentWeapon.UpdateWeaponInfo();
+        Player.Instance._currentWeapon.GetBulletInfo();
     }
 }

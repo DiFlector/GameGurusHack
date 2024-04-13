@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 846ad4b7e0023de48a90ec1466a241cb, type: 3}
-  m_Name: PistolData
+  m_Name: ShotgunData
   m_EditorClassIdentifier: 
-  Name: Pistol
-  Sprite: {fileID: 21300000, guid: 4c83e183f0c8c5a4ca1e25bcd602732a, type: 3}
-  MaxAmmoIn: 12
-  AllAmmo: 60
+  Name: Shotgun
+  Sprite: {fileID: 0}
+  MaxAmmoIn: 6
+  AllAmmo: 42
   FireRate: 1
-  ReloadTime: 2.5
-  WideScope: 0
+  ReloadTime: 3
+  WideScope: 1
   FireType: 1

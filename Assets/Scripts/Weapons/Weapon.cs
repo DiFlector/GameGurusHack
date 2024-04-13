@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,13 +9,18 @@ public abstract class Weapon : MonoBehaviour
     public static UnityEvent<float> OnReload = new();
 
     public WeaponData WeaponData;
-    [SerializeField] private GameObject _bulletPrefab;
-    [SerializeField] private Transform _bulletSpawn;
-    [SerializeField] private float _bulletSpeed = 150;
-    protected int _maxAmmoIn { get; private set; }
+    [SerializeField] protected GameObject _bulletPrefab;
+    [SerializeField] protected Transform _bulletSpawn;
+    [SerializeField] protected float _bulletSpeed = 150;
+    [SerializeField] protected float _bulletLifetime = 30;
+    [SerializeField] protected ParticleSystem _particles1;
+    [SerializeField] protected ParticleSystem _particles2;
+
+
+    protected int _maxAmmoIn { get; set; }
     protected bool _isReloading;
-    protected int _ammoIn { get; private set; }
-    protected int _allAmmo { get; private set; }
+    protected int _ammoIn { get; set; }
+    protected int _allAmmo { get; set; }
 
     protected virtual void Awake()
     {
@@ -30,16 +34,17 @@ public abstract class Weapon : MonoBehaviour
         OnWeaponActive.Invoke(WeaponData);
     }
 
-    public virtual bool TryShoot()
+    public virtual bool TryToShoot()
     {
         if (!_isReloading)
         {
-            //Shot mechanics
             if (_ammoIn > 0)
             {
                 Debug.Log("Shot!");
                 GameObject bullet = Instantiate(_bulletPrefab, _bulletSpawn);
                 Debug.Log(bullet);
+                _particles1.Play();
+                _particles2.Play();
                 bullet.GetComponent<Rigidbody>().AddForce(_bulletSpawn.transform.forward * _bulletSpeed, ForceMode.Impulse);
                 StartCoroutine(BulletLifetime(bullet));
                 _ammoIn--;
@@ -52,7 +57,7 @@ public abstract class Weapon : MonoBehaviour
         return false;
     }
 
-    private IEnumerator BulletLifetime(GameObject bullet)
+    protected IEnumerator BulletLifetime(GameObject bullet)
     {
         yield return new WaitForSeconds(30);
         Destroy(bullet);
@@ -61,6 +66,12 @@ public abstract class Weapon : MonoBehaviour
     public void UpdateWeaponInfo()
     {
         OnWeaponActive.Invoke(WeaponData);
+        Debug.Log("updated");
+    }
+
+    public void GetBulletInfo()
+    {
+        OnAmmoChanged.Invoke(_ammoIn, _allAmmo);
     }
 
     public virtual bool TryToReload()

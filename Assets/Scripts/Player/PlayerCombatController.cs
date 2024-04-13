@@ -1,3 +1,5 @@
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,16 +31,48 @@ public class PlayerCombatController : MonoBehaviour
         Player.OnShot.AddListener(ThrowShootCast);
     }
 
-    private void ThrowShootCast()
+
+    private void ThrowShootCast(bool wideScope)
     {
-        Physics.Raycast(_camera.position, _camera.transform.forward, out RaycastHit hit, 10);
-        if (hit.collider != null)
+        if (!wideScope)
         {
-            if (hit.collider.GetComponent<IDamagable>() != null)
+            Physics.Raycast(_camera.position, _camera.transform.forward, out RaycastHit hit, 100);
+            if (hit.collider != null)
             {
-                hit.collider.GetComponent<IDamagable>().ApplyDamage();
+                hit.collider.GetComponent<IDamagable>()?.ApplyDamage();
             }
         }
+        else
+        {
+            RaycastHit[] hits = new RaycastHit[10];
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x + 0.1f, _camera.transform.forward.y, _camera.transform.forward.z), out hits[0], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x - 0.1f, _camera.transform.forward.y, _camera.transform.forward.z), out hits[1], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x + 0.1f, _camera.transform.forward.y + 0.1f, _camera.transform.forward.z), out hits[2], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x - 0.1f, _camera.transform.forward.y - 0.1f, _camera.transform.forward.z), out hits[3], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x + 0.1f, _camera.transform.forward.y - 0.1f, _camera.transform.forward.z), out hits[4], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x - 0.1f, _camera.transform.forward.y + 0.1f, _camera.transform.forward.z), out hits[5], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x, _camera.transform.forward.y + 0.1f, _camera.transform.forward.z), out hits[6], 10);
+            Physics.Raycast(_camera.position, new Vector3(_camera.transform.forward.x, _camera.transform.forward.y - 0.1f, _camera.transform.forward.z), out hits[7], 10);
+            Physics.Raycast(_camera.position, _camera.transform.forward, out hits[8], 20);
+
+            int hitted = 0;
+            IDamagable enemy = null;
+            foreach (var hit in hits)
+            {
+                if (hit.collider != null)
+                {
+                    if (hit.collider.GetComponent<IDamagable>() != null)
+                    {
+                        hitted++;
+                        enemy = hit.collider.GetComponent<IDamagable>();
+                    }
+                }
+            }
+            enemy?.ApplyDamage();
+            if (hitted > 4)
+                enemy?.ApplyDamage();
+        }
+
     }
 
     private void Fire(InputAction.CallbackContext context)

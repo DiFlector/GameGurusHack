@@ -8,7 +8,7 @@ public class Player : Singleton<Player>
 {
     public static UnityEvent<int> OnHealthChanged = new();
     public static UnityEvent<int> OnArmorChanged = new();
-    public static UnityEvent OnShot = new();
+    public static UnityEvent<bool> OnShot = new();
     private bool isSpraying; 
 
     public int HPAmount { get; private set; } = 5;
@@ -26,32 +26,47 @@ public class Player : Singleton<Player>
 
     public void Shoot(bool state)
     {
-        if (!isSpraying && state)
+        if (_currentWeapon.WeaponData.FireType == FireType.Spray)
         {
-            isSpraying = true;
-            StartCoroutine(ShootProcess(state));
+            if (!isSpraying && state)
+            {
+                isSpraying = true;
+                StartCoroutine(SprayProcess());
+            }
+            if (!state)
+            {
+                isSpraying = false;
+                StopAllCoroutines();
+
+            }
         }
-        if (!state)
-            isSpraying = false;
-        
-        OnShot.Invoke();
+        else if (state)
+        {
+            if (_currentWeapon.TryToShoot())
+            {
+                StartCoroutine(Recoil());
+                OnShot.Invoke(_currentWeapon.WeaponData.WideScope);
+            }     
+        }
     }
 
-    private IEnumerator ShootProcess(bool state)
+    private IEnumerator SprayProcess()
     {
         while (isSpraying)
         {
-            if (_currentWeapon.TryShoot())
+            if (_currentWeapon.TryToShoot())
             {
-                _camera.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value -= 2;
+                OnShot.Invoke(_currentWeapon.WeaponData.WideScope);
                 StartCoroutine(Recoil());
             }
             yield return new WaitForSeconds(_currentWeapon.WeaponData.FireRate);
         }
     }
 
+
     private IEnumerator Recoil()
     {
+        _camera.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value -= 2;
         float duration = 1;
         float timeElapsed = 0;
         while (timeElapsed / duration < 1)
