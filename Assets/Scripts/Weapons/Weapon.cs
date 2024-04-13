@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(WeaponAnimationController))]
 public abstract class Weapon : MonoBehaviour
 {
     public static UnityEvent<int, int> OnAmmoChanged = new();
@@ -15,6 +16,7 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] protected float _bulletLifetime = 30;
     [SerializeField] protected ParticleSystem _particles1;
     [SerializeField] protected ParticleSystem _particles2;
+    protected WeaponAnimationController _weaponAnimator;
 
 
     protected int _maxAmmoIn { get; set; }
@@ -27,6 +29,7 @@ public abstract class Weapon : MonoBehaviour
         _maxAmmoIn = WeaponData.MaxAmmoIn;
         _ammoIn = WeaponData.MaxAmmoIn;
         _allAmmo = WeaponData.AllAmmo;
+        _weaponAnimator = GetComponent<WeaponAnimationController>();
     }
 
     private void OnEnable()
@@ -88,10 +91,10 @@ public abstract class Weapon : MonoBehaviour
 
     protected IEnumerator ReloadProcess(int delay)
     {
-        //Play some animation
-        Debug.Log("RELOADING!");
+        _weaponAnimator.Animate(AnimType.Reload);
         OnReload.Invoke(delay);
         yield return new WaitForSeconds(delay);
+        _weaponAnimator.Animate(AnimType.Idle);
         if (_allAmmo >= (_maxAmmoIn - _ammoIn))
         {
             _allAmmo -= _maxAmmoIn - _ammoIn;

@@ -31,13 +31,12 @@ public class Player : Singleton<Player>
             if (!isSpraying && state)
             {
                 isSpraying = true;
-                StartCoroutine(SprayProcess());
+                StartCoroutine("SprayProcess");
             }
             if (!state)
             {
                 isSpraying = false;
-                StopAllCoroutines();
-
+                StopCoroutine("SprayProcess");
             }
         }
         else if (state)
@@ -80,6 +79,7 @@ public class Player : Singleton<Player>
     public void Reload()
     {
         _currentWeapon.TryToReload();
+        
     }
     
 
@@ -126,7 +126,10 @@ public class Player : Singleton<Player>
     private void CheckArmorForRestore()
     {
         if (ArmorAmount < 5)
+        {
             StartCoroutine(RestoreArmor());
+            Debug.Log("REST");
+        }
     }
 
     private IEnumerator RestoreArmor()

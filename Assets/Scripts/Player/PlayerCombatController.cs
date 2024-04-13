@@ -1,12 +1,10 @@
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Player))]
 public class PlayerCombatController : MonoBehaviour
 {
-    [SerializeField] private InputActionAsset _actionAsset;
+    [SerializeField] private InputActionAsset _inputAsset;
     private InputAction _fire;
     private InputAction _reload;
     private Player _player;
@@ -16,8 +14,8 @@ public class PlayerCombatController : MonoBehaviour
     {
         _player = GetComponent<Player>();
 
-        _fire = _actionAsset.FindAction("Fire");
-        _reload = _actionAsset.FindAction("Reload");
+        _fire = _inputAsset.FindAction("Fire");
+        _reload = _inputAsset.FindAction("Reload");
         _fire.Enable();
         _reload.Enable();
 
