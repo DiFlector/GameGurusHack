@@ -74,6 +74,7 @@ namespace Enemy
                     _agent.speed = 3f;
                     _agent.isStopped = false;
                     _patrolling._isPatrolling = true;
+                    _moveTarget = _patrolling.FindClosestWaypoint(_moveTarget);
                     break;
                 case EnemyStatesEnum.Following:
                     _agent.speed = 5f;

@@ -31,6 +31,22 @@ namespace Enemy
                 _agent.SetDestination(_waypoints[_currentWaypointIndex].position);
             }
         }
+
+        public Transform FindClosestWaypoint(Transform _currentGoal)
+        {
+            if (_currentGoal != Player.Instance.transform) return Player.Instance.transform;
+            var min = Vector3.Distance(_waypoints[0].position, transform.position);
+            Transform closestPoint = _waypoints[0];
+            foreach (var point in _waypoints)
+            {
+                if (Vector3.Distance(point.position, transform.position) < min)
+                {
+                    min = Vector3.Distance(point.position, transform.position);
+                    closestPoint = point;
+                }
+            }
+            return closestPoint;
+        }
         private void Update()
         {
             if(!_isPatrolling) return;
