@@ -1,15 +1,18 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Enemy
 {
     public class EnemyBase : MonoBehaviour, IDamagable
     {
+        public GameObject deathEffect;
+
         private int _health = 4;
         //private int _armor;
         private int _damage = 1;
-        public float _maxAttackRange { get; private set; } = 10;
-        public float _viewDistance { get; private set; } = 20;
+        public float _maxAttackRange { get; private set; } = 2;
+        public float _viewDistance { get; private set; } = 10;
         [HideInInspector] public float Speed {get; private set;}
         private AudioClip _response1;
         [SerializeField] private float _attackTimer;
@@ -34,7 +37,7 @@ namespace Enemy
 
         private void Death()
         {
-            Destroy(gameObject);
+            StartCoroutine(DeathEffectActivate());
         }
 
         public void SetResponse()
@@ -53,6 +56,14 @@ namespace Enemy
             if (_health > 0) return;
             _health = 0;
             Death();
+        }
+
+        private IEnumerator DeathEffectActivate()
+        {
+            deathEffect.GetComponent<ParticleSystem>().Play();
+            gameObject.transform.localScale = Vector3.zero;
+            yield return new WaitForSeconds(1f);
+            Destroy(gameObject);
         }
     }
 }

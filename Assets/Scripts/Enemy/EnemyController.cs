@@ -50,6 +50,7 @@ namespace Enemy
         {
             if (!_moveTarget) return;
             _agent.destination = _moveTarget.position;
+            _agent.transform.LookAt( _playerPosition );
         }
 
         private void Awake()
@@ -70,13 +71,13 @@ namespace Enemy
                     _patrolling._isPatrolling = false;
                     break;
                 case EnemyStatesEnum.Patrolling:
-                    _agent.speed = 3f;
+                    _agent.speed = 0f;
                     _agent.isStopped = false;
                     _patrolling._isPatrolling = true;
-                    _moveTarget = _patrolling.FindClosestWaypoint(_moveTarget);
+                    //_moveTarget = _patrolling.FindClosestWaypoint(_moveTarget);
                     break;
                 case EnemyStatesEnum.Following:
-                    _agent.speed = 5f;
+                    _agent.speed = 1f;
                     _agent.isStopped = false;
                     _patrolling._isPatrolling = false;
                     _moveTarget = _playerPosition;
