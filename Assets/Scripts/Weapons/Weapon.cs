@@ -17,6 +17,7 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] protected ParticleSystem _particles1;
     [SerializeField] protected ParticleSystem _particles2;
     protected WeaponAnimationController _weaponAnimator;
+    [SerializeField] private Camera _camera;
 
 
     protected int _maxAmmoIn { get; set; }
@@ -48,7 +49,7 @@ public abstract class Weapon : MonoBehaviour
                 Debug.Log(bullet);
                 _particles1.Play();
                 _particles2.Play();
-                bullet.GetComponent<Rigidbody>().AddForce(_bulletSpawn.transform.forward * _bulletSpeed, ForceMode.Impulse);
+                bullet.GetComponent<Rigidbody>().AddForce(_camera.transform.forward * _bulletSpeed, ForceMode.Impulse);
                 StartCoroutine(BulletLifetime(bullet));
                 _ammoIn--;
                 OnAmmoChanged.Invoke(_ammoIn, _allAmmo);

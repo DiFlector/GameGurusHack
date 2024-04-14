@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 [RequireComponent(typeof(Player))]
 [RequireComponent(typeof(CharacterController))]
@@ -73,7 +74,7 @@ public class PlayerController : MonoBehaviour
         _velocity.x = 0;
         _velocity.z = 0;
 
-        transform.eulerAngles = new Vector3(0, _mainCam.eulerAngles.y, 0);
+        transform.DORotate(new Vector3(0, _mainCam.eulerAngles.y, 0), 0.1f);
         Vector3 tempVelocity = _moveDir.x * transform.right * _moveSpeed + _moveDir.z * transform.forward * _moveSpeed;
         _velocity += tempVelocity; 
 
