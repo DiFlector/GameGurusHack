@@ -7,6 +7,7 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private InputActionAsset _inputAsset;
     private InputAction _fire;
     private InputAction _reload;
+    private InputAction _selectWeapon;
     private Player _player;
     [SerializeField] private Transform _camera;
 
@@ -16,12 +17,16 @@ public class PlayerCombatController : MonoBehaviour
 
         _fire = _inputAsset.FindAction("Fire");
         _reload = _inputAsset.FindAction("Reload");
+        _selectWeapon = _inputAsset.FindAction("OpenWeaponMenu");
         _fire.Enable();
         _reload.Enable();
+        _selectWeapon.Enable();
 
         _fire.performed += Fire;
         _fire.canceled += Fire;
         _reload.performed += Reload;
+        _selectWeapon.performed += OpenSelection;
+        _selectWeapon.canceled += OpenSelection;
     }
 
     private void OnEnable()
@@ -86,5 +91,10 @@ public class PlayerCombatController : MonoBehaviour
     private void Reload(InputAction.CallbackContext context)
     {
         _player.Reload();
+    }
+
+    private void OpenSelection(InputAction.CallbackContext context)
+    {
+        _player.OpenSelection();
     }
 }

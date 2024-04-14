@@ -60,6 +60,11 @@ public abstract class Weapon : MonoBehaviour
         return false;
     }
 
+    public void Toggle(bool state)
+    {
+        transform.GetChild(0).gameObject.SetActive(state);
+    }
+
     protected IEnumerator BulletLifetime(GameObject bullet)
     {
         yield return new WaitForSeconds(30);
@@ -87,6 +92,21 @@ public abstract class Weapon : MonoBehaviour
         }
         else
             return false;
+    }
+
+    public void SwapDown()
+    {
+        _weaponAnimator.Animate(AnimType.WeaponDown);
+    }
+
+    public void SwapUp()
+    {
+        _weaponAnimator.Animate(AnimType.WeaponUp);
+    }
+
+    public void Idle()
+    {
+        _weaponAnimator.Animate(AnimType.Idle);
     }
 
     protected IEnumerator ReloadProcess(int delay)

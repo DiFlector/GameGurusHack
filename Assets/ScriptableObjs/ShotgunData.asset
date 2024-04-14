@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ShotgunData
   m_EditorClassIdentifier: 
   Name: Shotgun
+  Index: 2
   Sprite: {fileID: 0}
   MaxAmmoIn: 6
   AllAmmo: 42

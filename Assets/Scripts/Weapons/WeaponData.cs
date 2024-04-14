@@ -9,6 +9,7 @@ public enum FireType
 public class WeaponData : ScriptableObject
 {
     public string Name;
+    public int Index;
     public Sprite Sprite;
     public int MaxAmmoIn;
     public int AllAmmo;

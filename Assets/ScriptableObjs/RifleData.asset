@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RifleData
   m_EditorClassIdentifier: 
   Name: MKA
+  Index: 1
   Sprite: {fileID: 0}
   MaxAmmoIn: 25
   AllAmmo: 175

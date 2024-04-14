@@ -9,14 +9,19 @@ public class Player : Singleton<Player>
     public static UnityEvent<int> OnHealthChanged = new();
     public static UnityEvent<int> OnArmorChanged = new();
     public static UnityEvent<bool> OnShot = new();
-    private bool isSpraying; 
+    private bool isSpraying;
+    private bool canShoot = true;
+    private bool isSwapping;
 
     public int HPAmount { get; private set; } = 5;
     public int ArmorAmount { get; private set; } = 0;
     [SerializeField] private float _armorRestoreDelay;
     public Weapon _currentWeapon;
-    [SerializeField] private List<Weapon> _weapons;
+    [SerializeField] private Pistol _pistol;
+    [SerializeField] private Rifle _rifle;
+    [SerializeField] private Shotgun _shotgun;
     [SerializeField] private CinemachineVirtualCamera _camera;
+    [SerializeField] private MainView _mainView;
 
     protected override void Awake()
     {
@@ -24,28 +29,48 @@ public class Player : Singleton<Player>
         CheckArmorForRestore();
     }
 
+    private void OnEnable()
+    {
+        CircleMenu.OnWeaponSwap.AddListener(SwapWeapon);
+        CircleMenu.OnSelectorOpened.AddListener(ShootCheck);
+    }
+
+    private void OnDisable()
+    {
+        CircleMenu.OnWeaponSwap.RemoveListener(SwapWeapon);
+        CircleMenu.OnSelectorOpened.RemoveListener(ShootCheck);
+    }
+
+    private void ShootCheck(bool state)
+    {
+        canShoot = !state;
+    }
+
     public void Shoot(bool state)
     {
-        if (_currentWeapon.WeaponData.FireType == FireType.Spray)
+        if (canShoot)
         {
-            if (!isSpraying && state)
+            if (_currentWeapon.WeaponData.FireType == FireType.Spray)
             {
-                isSpraying = true;
-                StartCoroutine("SprayProcess");
+                if (!isSpraying && state)
+                {
+                    isSpraying = true;
+                    StartCoroutine("SprayProcess");
+                }
+                if (!state)
+                {
+                    isSpraying = false;
+                    StopCoroutine("SprayProcess");
+                }
             }
-            if (!state)
+            else if (state)
             {
-                isSpraying = false;
-                StopCoroutine("SprayProcess");
+                if (_currentWeapon.TryToShoot())
+                {
+                    StartCoroutine(Recoil());
+                    OnShot.Invoke(_currentWeapon.WeaponData.WideScope);
+                }
             }
-        }
-        else if (state)
-        {
-            if (_currentWeapon.TryToShoot())
-            {
-                StartCoroutine(Recoil());
-                OnShot.Invoke(_currentWeapon.WeaponData.WideScope);
-            }     
         }
     }
 
@@ -62,6 +87,10 @@ public class Player : Singleton<Player>
         }
     }
 
+    public void OpenSelection()
+    {
+        _mainView.ToggleCircleMenu();
+    }
 
     private IEnumerator Recoil()
     {
@@ -79,9 +108,42 @@ public class Player : Singleton<Player>
     public void Reload()
     {
         _currentWeapon.TryToReload();
-        
+    }
+
+    private void SwapWeapon(WeaponType type)
+    {
+        StartCoroutine(SwapWeaponProcess(type));
     }
     
+    private IEnumerator SwapWeaponProcess(WeaponType type)
+    {
+        if (!isSwapping)
+        {
+            isSwapping = true;
+            _currentWeapon.SwapDown();
+            yield return new WaitForSeconds(0.4f);
+            _currentWeapon.Toggle(false);
+            switch (type)
+            {
+                case WeaponType.Pistol:
+                    _currentWeapon = _pistol;
+                    break;
+                case WeaponType.Rifle:
+                    _currentWeapon = _rifle;
+                    break;
+                case WeaponType.Shotgun:
+                    _currentWeapon = _shotgun;
+                    break;
+            }
+            _currentWeapon.Toggle(true);
+            _currentWeapon.UpdateWeaponInfo();
+            _currentWeapon.GetBulletInfo();
+            _currentWeapon.SwapUp();
+            yield return new WaitForSeconds(0.4f);
+            _currentWeapon.Idle();
+            isSwapping = false;
+        }
+    }
 
     public void ApplyDamage()
     {

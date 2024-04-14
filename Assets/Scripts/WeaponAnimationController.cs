@@ -5,7 +5,8 @@ public enum AnimType
 {
     Idle,
     Reload,
-    Change
+    WeaponDown,
+    WeaponUp
 }
 
 public class WeaponAnimationController : MonoBehaviour
@@ -13,7 +14,8 @@ public class WeaponAnimationController : MonoBehaviour
     [SerializeField] private Animator _weaponAnimator;
     private string _currentState;
 
-    private const string WEAPON_CHANGE = "Change";
+    private const string WEAPON_DOWN = "Down";
+    private const string WEAPON_UP = "Up";
     private const string WEAPON_RELOAD = "Reload";
     private const string WEAPON_IDLE = "Idle";
 
@@ -27,8 +29,11 @@ public class WeaponAnimationController : MonoBehaviour
             case AnimType.Reload:
                 ChangeState(WEAPON_RELOAD);
                 break;
-            case AnimType.Change:
-                ChangeState(WEAPON_CHANGE);
+            case AnimType.WeaponDown:
+                ChangeState(WEAPON_DOWN);
+                break;
+            case AnimType.WeaponUp:
+                ChangeState(WEAPON_UP);
                 break;
         }
     }

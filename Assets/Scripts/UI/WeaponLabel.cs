@@ -10,6 +10,7 @@ public class WeaponLabel : MonoBehaviour
     [SerializeField] private TMP_Text _ammoAtAll;
     [SerializeField] private Image _currentGun;
     [SerializeField] private UICircle _reloadCircle;
+    [SerializeField] private GameObject[] _gunSprites;
 
     private void OnEnable()
     {
@@ -27,7 +28,11 @@ public class WeaponLabel : MonoBehaviour
 
     private void ChangeWeapon(WeaponData data)
     {
-        _currentGun.sprite = data.Sprite;
+        for (int i = 0; i < _gunSprites.Length; i++)
+        {
+            _gunSprites[i].SetActive(false);
+        }
+        _gunSprites[data.Index].SetActive(true);
     }
 
     private void DisplayReload(float duration)
