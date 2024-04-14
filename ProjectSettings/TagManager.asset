@@ -3,20 +3,23 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Weapon
+  - SecondCamera
+  - BulletSpawn
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - URP
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - World
+  - Tv
+  - Kitchen
+  - CutScenes
+  - Player
+  - Enemy
   - 
   - 
   - 
